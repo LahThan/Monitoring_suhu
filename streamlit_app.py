@@ -34,7 +34,7 @@ if uploaded_file is not None:
     st.audio(uploaded_file)
 
 # Opsi B: Pakai file dari GitHub (raw URL)
-st.write("Atau masukkan GitHub raw URL file audio (contoh: https://raw.githubusercontent.com/username/repo/branch/backsound.mp3)")
+st.write("Atau masukkan GitHub raw URL file audio (contoh: https://raw.githubusercontent.com/LahThan/Monitoring_suhu/refs/heads/main/backsound.mp3)")
 music_url = st.text_input("GitHub raw URL", value=DEFAULT_MUSIC_GITHUB_RAW)
 if music_url:
     st.audio(music_url)
