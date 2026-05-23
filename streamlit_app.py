@@ -297,7 +297,13 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Backsound
-embed_audio_from_url(URL_BACKSOUND, autoplay=AUTOPLAY_MUSIK)
+if 'audio_started' not in st.session_state:
+    st.session_state.audio_started = False
+
+embed_audio_from_url(URL_BACKSOUND, st.session_state.audio_started)
+
+if not st.session_state.audio_started:
+    st.session_state.audio_started = True
 
 # Info bar
 now = datetime.now(pytz.timezone('Asia/Jakarta'))
