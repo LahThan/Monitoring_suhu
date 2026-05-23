@@ -30,7 +30,8 @@ st.set_page_config(
     page_title=JUDUL_APLIKASI,
     page_icon="🔬",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={}
 )
 
 # ============================================================
@@ -180,6 +181,17 @@ html, body, [data-testid="stAppViewContainer"] {
 }
 #MainMenu, footer, header { visibility: hidden; }
 [data-testid="stToolbar"] { display: none; }
+</style>
+""", unsafe_allow_html=True)
+
+# Paksa tombol sidebar selalu muncul
+st.markdown("""
+<style>
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
