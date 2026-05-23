@@ -226,7 +226,7 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     st.markdown("")
-    if st.button("▶ Refresh Sekarang", use_container_width=True):
+    if st.button("▶ Refresh Sekarang", use_container_width=True, key="btn_refresh"):
         st.rerun()
 
     st.markdown("---")
@@ -269,7 +269,8 @@ with st.sidebar:
             data=csv,
             file_name=f"lab_data_{now_str}.csv",
             mime="text/csv",
-            use_container_width=True
+            use_container_width=True,
+            key="btn_download"
         )
         st.caption(f"Total data tersimpan: **{total}** record")
     else:
