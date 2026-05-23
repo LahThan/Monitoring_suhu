@@ -179,12 +179,12 @@ html, body, [data-testid="stAppViewContainer"] {
     margin-top: 2rem;
     letter-spacing: 0.1em;
 }
-#MainMenu, footer, header { visibility: hidden; }
-[data-testid="stToolbar"] { display: none; }
-[data-testid="collapsedControl"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+[data-testid="collapsedControl"] { display: none !important; }
+section[data-testid="stSidebar"] {
+    min-width: 300px !important;
+    max-width: 300px !important;
+    transform: none !important;
+    display: block !important;
 }
 </style>
 """, unsafe_allow_html=True)
