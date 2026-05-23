@@ -3,7 +3,7 @@ import random
 import time
 import base64
 from datetime import datetime
-import requests
+import pytz
 
 JUDUL_APLIKASI = "Lab Environment Monitor"         
 SUBJUDUL = "Sistem Monitoring Suhu, Kelembapan & Tekanan"  
@@ -258,7 +258,7 @@ st.markdown(f"""
 embed_audio_from_url(URL_BACKSOUND, autoplay=AUTOPLAY_MUSIK)
 
 # Info bar
-now = datetime.now()
+now = datetime.now(pytz.timezone('Asia/Jakarta'))
 st.markdown(f"""
 <div class="info-bar">
     <div class="info-item">
