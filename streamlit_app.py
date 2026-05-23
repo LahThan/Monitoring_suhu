@@ -22,7 +22,7 @@ BATAS_TEKANAN_MIN = 990
 BATAS_TEKANAN_MAX = 1020  
 
 # Interval refresh otomatis (detik)
-INTERVAL_REFRESH = 5      
+INTERVAL_REFRESH = 10      
 
 # ============================================================
 # KONFIGURASI HALAMAN
@@ -382,5 +382,6 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Auto-refresh
+placeholder = st.empty()
 time.sleep(INTERVAL_REFRESH)
 st.rerun()
