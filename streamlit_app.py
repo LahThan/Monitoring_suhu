@@ -181,12 +181,6 @@ html, body, [data-testid="stAppViewContainer"] {
 }
 #MainMenu, footer, header { visibility: hidden; }
 [data-testid="stToolbar"] { display: none; }
-</style>
-""", unsafe_allow_html=True)
-
-# Paksa tombol sidebar selalu muncul
-st.markdown("""
-<style>
 [data-testid="collapsedControl"] {
     display: flex !important;
     visibility: visible !important;
@@ -457,4 +451,3 @@ st.markdown(f"""
 # ============================================================
 time.sleep(10)
 st.rerun()
-
