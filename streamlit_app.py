@@ -196,7 +196,6 @@ def embed_audio_from_url(url: str, autoplay: bool = True):
         response = requests.get(url)
         audio_bytes = response.content
         b64 = base64.b64encode(audio_bytes).decode()
-        auto = "autoplay" if autoplay else ""
         html = f"""
         <div style="
             background: rgba(0,212,255,0.07);
@@ -210,10 +209,16 @@ def embed_audio_from_url(url: str, autoplay: bool = True):
         ">
             <span style="font-size:1.4rem;">🎵</span>
             <span style="font-family:'Rajdhani',sans-serif; color:#6a8caa; font-size:0.85rem; letter-spacing:0.1em;">BACKSOUND</span>
-            <audio controls loop {auto} style="height:32px; flex:1; min-width:200px;">
+            <audio id="lab-audio" controls loop style="height:32px; flex:1; min-width:200px;">
                 <source src="data:audio/mp3;base64,{b64}" type="audio/mpeg">
             </audio>
         </div>
+        <script>
+            const audio = document.getElementById('lab-audio');
+            document.addEventListener('click', function() {{
+                audio.play();
+            }}, {{ once: true }});
+        </script>
         """
         st.markdown(html, unsafe_allow_html=True)
     except:
