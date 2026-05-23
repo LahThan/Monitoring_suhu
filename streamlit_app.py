@@ -191,11 +191,13 @@ html, body, [data-testid="stAppViewContainer"] {
 # FUNGSI BACKSOUND (load dari URL GitHub)
 # ============================================================
 
-def embed_audio_from_url(url: str, autoplay: bool = True):
+def embed_audio_from_url(url: str, already_started: bool = False):
     try:
         response = requests.get(url)
         audio_bytes = response.content
         b64 = base64.b64encode(audio_bytes).decode()
+        overlay_display = "none" if already_started else "flex"
+        autoplay_attr = "autoplay" if already_started else ""
         html = f"""
         <div id="overlay" style="
             position: fixed;
@@ -203,7 +205,7 @@ def embed_audio_from_url(url: str, autoplay: bool = True):
             width: 100vw; height: 100vh;
             background: rgba(4,13,26,0.92);
             z-index: 9999;
-            display: flex;
+            display: {overlay_display};
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -241,7 +243,7 @@ def embed_audio_from_url(url: str, autoplay: bool = True):
         ">
             <span style="font-size:1.4rem;">🎵</span>
             <span style="font-family:'Rajdhani',sans-serif; color:#6a8caa; font-size:0.85rem; letter-spacing:0.1em;">BACKSOUND</span>
-            <audio id="lab-audio" controls loop style="height:32px; flex:1; min-width:200px;">
+            <audio id="lab-audio" controls loop {autoplay_attr} style="height:32px; flex:1; min-width:200px;">
                 <source src="data:audio/mp3;base64,{b64}" type="audio/mpeg">
             </audio>
         </div>
