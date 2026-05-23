@@ -3,6 +3,7 @@ import pandas as pd
 import random
 import requests
 import base64
+import time
 from datetime import datetime, timezone, timedelta
 
 WIB = timezone(timedelta(hours=7))
@@ -196,6 +197,10 @@ if "audio_bytes" not in st.session_state:
     except:
         st.session_state.audio_bytes = None
 
+# Auto tambah data setiap 10 detik
+if "last_refresh" not in st.session_state:
+    st.session_state.last_refresh = datetime.now(WIB)
+
 # ============================================================
 # SIDEBAR
 # ============================================================
@@ -206,22 +211,17 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    # Tombol refresh
-    st.markdown("**🔄 Ambil Data Sensor**")
-    if st.button("▶ Refresh Data Baru", use_container_width=True):
-        now_data = datetime.now(WIB)
-        suhu_baru = round(random.uniform(17, 28), 1)
-        kelembapan_baru = round(random.uniform(38, 75), 1)
-        tekanan_baru = round(random.uniform(985, 1025), 1)
-        new_row = pd.DataFrame({
-            "Waktu": [now_data.strftime("%H:%M:%S")],
-            "Suhu (°C)": [suhu_baru],
-            "Kelembapan (%)": [kelembapan_baru],
-            "Tekanan (hPa)": [tekanan_baru]
-        })
-        st.session_state.data = pd.concat(
-            [st.session_state.data, new_row], ignore_index=True
-        )
+    # Auto refresh info
+    st.markdown("**🔄 Auto Refresh**")
+    st.markdown("""
+    <div style="background:rgba(0,212,255,0.07); border:1px solid rgba(0,212,255,0.2);
+    border-radius:8px; padding:0.6rem 0.8rem; font-size:0.8rem; color:#00d4ff;">
+    ⏱ Data diperbarui otomatis setiap <b>10 detik</b>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("")
+    if st.button("▶ Refresh Sekarang", use_container_width=True):
+        st.rerun()
 
     st.markdown("---")
 
@@ -277,6 +277,26 @@ with st.sidebar:
         st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=True)
     else:
         st.warning("Gagal load audio. Cek URL_BACKSOUND.")
+
+# ============================================================
+# AUTO REFRESH DATA SETIAP 10 DETIK
+# ============================================================
+now_data = datetime.now(WIB)
+selisih = (now_data - st.session_state.last_refresh).total_seconds()
+if selisih >= 10:
+    suhu_baru = round(random.uniform(17, 28), 1)
+    kelembapan_baru = round(random.uniform(38, 75), 1)
+    tekanan_baru = round(random.uniform(985, 1025), 1)
+    new_row = pd.DataFrame({
+        "Waktu": [now_data.strftime("%H:%M:%S")],
+        "Suhu (°C)": [suhu_baru],
+        "Kelembapan (%)": [kelembapan_baru],
+        "Tekanan (hPa)": [tekanan_baru]
+    })
+    st.session_state.data = pd.concat(
+        [st.session_state.data, new_row], ignore_index=True
+    )
+    st.session_state.last_refresh = now_data
 
 # ============================================================
 # HEADER
@@ -419,3 +439,10 @@ st.markdown(f"""
     {now.strftime('%d/%m/%Y %H:%M')} WIB
 </div>
 """, unsafe_allow_html=True)
+
+# ============================================================
+# AUTO RERUN SETIAP 10 DETIK
+# ============================================================
+time.sleep(10)
+st.rerun()
+
