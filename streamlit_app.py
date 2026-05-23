@@ -192,32 +192,32 @@ html, body, [data-testid="stAppViewContainer"] {
 # ============================================================
 
 def embed_audio_from_url(url: str, autoplay: bool = True):
-    """Embed audio dari URL GitHub raw."""
-    auto = "autoplay" if autoplay else ""
-    html = f"""
-    <audio id="bg-audio" loop {auto} style="display:none;">
-        <source src="{url}" type="audio/mpeg">
-    </audio>
-    <div style="
-        background: rgba(0,212,255,0.07);
-        border: 1px solid rgba(0,212,255,0.2);
-        border-radius: 12px;
-        padding: 0.8rem 1.2rem;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-    ">
-        <span style="font-size:1.4rem;">🎵</span>
-        <span style="font-family:'Rajdhani',sans-serif; color:#6a8caa; font-size:0.85rem; letter-spacing:0.1em;">BACKSOUND</span>
-        <audio controls loop style="height:32px; flex:1; min-width:200px;">
-            <source src="{url}" type="audio/mpeg">
-            Browser tidak mendukung audio.
-        </audio>
-    </div>
-    """
-    st.markdown(html, unsafe_allow_html=True)
+    try:
+        response = requests.get(url)
+        audio_bytes = response.content
+        b64 = base64.b64encode(audio_bytes).decode()
+        auto = "autoplay" if autoplay else ""
+        html = f"""
+        <div style="
+            background: rgba(0,212,255,0.07);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        ">
+            <span style="font-size:1.4rem;">🎵</span>
+            <span style="font-family:'Rajdhani',sans-serif; color:#6a8caa; font-size:0.85rem; letter-spacing:0.1em;">BACKSOUND</span>
+            <audio controls loop {auto} style="height:32px; flex:1; min-width:200px;">
+                <source src="data:audio/mp3;base64,{b64}" type="audio/mpeg">
+            </audio>
+        </div>
+        """
+        st.markdown(html, unsafe_allow_html=True)
+    except:
+        st.warning("⚠️ Gagal memuat backsound. Cek URL di konfigurasi.")
 
 
 # ============================================================
