@@ -197,6 +197,38 @@ def embed_audio_from_url(url: str, autoplay: bool = True):
         audio_bytes = response.content
         b64 = base64.b64encode(audio_bytes).decode()
         html = f"""
+        <div id="overlay" style="
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(4,13,26,0.92);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        " onclick="startAudio()">
+            <div style="
+                font-family: 'Orbitron', monospace;
+                color: #00d4ff;
+                font-size: 1.1rem;
+                letter-spacing: 0.2em;
+                margin-bottom: 1.5rem;
+                text-shadow: 0 0 20px rgba(0,212,255,0.6);
+            ">🔬 KLIK UNTUK MEMULAI</div>
+            <div style="
+                width: 80px; height: 80px;
+                border-radius: 50%;
+                background: rgba(0,212,255,0.15);
+                border: 2px solid #00d4ff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                box-shadow: 0 0 30px rgba(0,212,255,0.4);
+            ">▶</div>
+        </div>
         <div style="
             background: rgba(0,212,255,0.07);
             border: 1px solid rgba(0,212,255,0.2);
@@ -214,10 +246,12 @@ def embed_audio_from_url(url: str, autoplay: bool = True):
             </audio>
         </div>
         <script>
-            const audio = document.getElementById('lab-audio');
-            document.addEventListener('click', function() {{
+            function startAudio() {{
+                const audio = document.getElementById('lab-audio');
+                const overlay = document.getElementById('overlay');
                 audio.play();
-            }}, {{ once: true }});
+                overlay.style.display = 'none';
+            }}
         </script>
         """
         st.markdown(html, unsafe_allow_html=True)
