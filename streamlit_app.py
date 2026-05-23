@@ -9,7 +9,7 @@ JUDUL_APLIKASI = "Lab Environment Monitor"
 SUBJUDUL = "Sistem Monitoring Suhu, Kelembapan & Tekanan"  
 NAMA_LABORATORIUM = "Laboratorium Kimia Analitik"  
 
-URL_BACKSOUND = "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/refs/heads/main/backsound.mp3"
+URL_BACKSOUND = "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound.mp3"
 
 AUTOPLAY_MUSIK = True
 
