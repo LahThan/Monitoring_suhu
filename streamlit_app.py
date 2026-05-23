@@ -1,44 +1,40 @@
 import streamlit as st
+import pandas as pd
 import random
-import time
-import base64
-from datetime import datetime
 import requests
-import pytz
+import base64
+from datetime import datetime, timezone, timedelta
 
-JUDUL_APLIKASI = "Lab Environment Monitor"         
-SUBJUDUL = "Sistem Monitoring Suhu, Kelembapan & Tekanan"  
-NAMA_LABORATORIUM = "Laboratorium Kimia Analitik"  
+WIB = timezone(timedelta(hours=7))
 
-URL_BACKSOUND = "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound.mp3"
+# ============================================================
+# 🔧 KONFIGURASI — UBAH SESUAI KEBUTUHAN
+# ============================================================
+JUDUL_APLIKASI = "Lab Environment Monitor"                    # ✏️ Ganti judul
+SUBJUDUL = "Sistem Monitoring Suhu, Kelembapan & Tekanan"     # ✏️ Ganti subjudul
+NAMA_LABORATORIUM = "Laboratorium Kimia Analitik"             # ✏️ Ganti nama lab
+URL_BACKSOUND = "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound.mp3"  # ✏️ Ganti URL lagu
 
-AUTOPLAY_MUSIK = True
-
-BATAS_SUHU_MIN = 18.0     
-BATAS_SUHU_MAX = 26.0     
-BATAS_KELEMBAPAN_MIN = 40 
-BATAS_KELEMBAPAN_MAX = 70 
-BATAS_TEKANAN_MIN = 990   
-BATAS_TEKANAN_MAX = 1020  
-
-# Interval refresh otomatis (detik)
-INTERVAL_REFRESH = 10      
+BATAS_SUHU_MIN = 18.0       # ✏️ Suhu minimum normal (°C)
+BATAS_SUHU_MAX = 26.0       # ✏️ Suhu maksimum normal (°C)
+BATAS_KELEMBAPAN_MIN = 40   # ✏️ Kelembapan minimum normal (%)
+BATAS_KELEMBAPAN_MAX = 70   # ✏️ Kelembapan maksimum normal (%)
+BATAS_TEKANAN_MIN = 990     # ✏️ Tekanan minimum normal (hPa)
+BATAS_TEKANAN_MAX = 1020    # ✏️ Tekanan maksimum normal (hPa)
 
 # ============================================================
 # KONFIGURASI HALAMAN
 # ============================================================
-
 st.set_page_config(
     page_title=JUDUL_APLIKASI,
     page_icon="🔬",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # ============================================================
-# STYLING CSS
+# CSS
 # ============================================================
-
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
@@ -49,203 +45,242 @@ st.markdown("""
     --bg-card2: #0a1f3d;
     --accent-blue: #00d4ff;
     --accent-green: #00ff88;
-    --accent-yellow: #ffd700;
     --accent-red: #ff4444;
     --text-main: #e0f0ff;
     --text-dim: #6a8caa;
     --border: rgba(0,212,255,0.2);
-    --glow: 0 0 20px rgba(0,212,255,0.3);
 }
 
 html, body, [data-testid="stAppViewContainer"] {
-    background: var(--bg-primary) !important;
-    color: var(--text-main) !important;
+    background: #040d1a !important;
+    color: #e0f0ff !important;
     font-family: 'Rajdhani', sans-serif !important;
 }
-
 [data-testid="stAppViewContainer"] {
     background: radial-gradient(ellipse at 20% 0%, #0a1f4d 0%, #040d1a 60%) !important;
 }
-
-/* Header */
+[data-testid="stSidebar"] {
+    background: #071428 !important;
+    border-right: 1px solid rgba(0,212,255,0.15) !important;
+}
 .header-wrap {
     text-align: center;
-    padding: 2rem 0 1rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 2rem;
+    padding: 1.5rem 0 1rem;
+    border-bottom: 1px solid rgba(0,212,255,0.2);
+    margin-bottom: 1.5rem;
 }
 .header-title {
     font-family: 'Orbitron', monospace;
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     font-weight: 900;
-    letter-spacing: 0.12em;
-    color: var(--accent-blue);
-    text-shadow: 0 0 30px rgba(0,212,255,0.6), 0 0 60px rgba(0,212,255,0.2);
+    letter-spacing: 0.1em;
+    color: #00d4ff;
+    text-shadow: 0 0 30px rgba(0,212,255,0.6);
     margin: 0;
 }
 .header-sub {
-    font-size: 1rem;
-    color: var(--text-dim);
+    font-size: 0.9rem;
+    color: #6a8caa;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-top: 0.4rem;
+    margin-top: 0.3rem;
 }
 .header-lab {
     font-size: 1.1rem;
-    color: var(--accent-green);
+    color: #00ff88;
     font-weight: 600;
     letter-spacing: 0.1em;
-    margin-top: 0.3rem;
+    margin-top: 0.2rem;
 }
-
-/* Kartu sensor */
 .sensor-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+    background: #071428;
+    border: 1px solid rgba(0,212,255,0.2);
     border-radius: 16px;
-    padding: 1.8rem 1.5rem;
+    padding: 1.5rem 1.2rem;
     text-align: center;
     position: relative;
     overflow: hidden;
-    box-shadow: var(--glow);
-    transition: transform 0.2s;
+    box-shadow: 0 0 20px rgba(0,212,255,0.15);
 }
-.sensor-card:hover { transform: translateY(-4px); }
 .sensor-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 3px;
-    background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+    background: linear-gradient(90deg, transparent, #00d4ff, transparent);
 }
-.sensor-card.warning { border-color: rgba(255,68,68,0.5); box-shadow: 0 0 20px rgba(255,68,68,0.3); }
-.sensor-card.warning::before { background: linear-gradient(90deg, transparent, var(--accent-red), transparent); }
-
-.sensor-icon { font-size: 2.4rem; margin-bottom: 0.5rem; }
+.sensor-card.warning {
+    border-color: rgba(255,68,68,0.5);
+    box-shadow: 0 0 20px rgba(255,68,68,0.2);
+}
+.sensor-card.warning::before {
+    background: linear-gradient(90deg, transparent, #ff4444, transparent);
+}
+.sensor-icon { font-size: 2rem; margin-bottom: 0.4rem; }
 .sensor-label {
     font-family: 'Orbitron', monospace;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     letter-spacing: 0.2em;
-    color: var(--text-dim);
+    color: #6a8caa;
     text-transform: uppercase;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
 }
 .sensor-value {
     font-family: 'Orbitron', monospace;
-    font-size: 2.8rem;
+    font-size: 2.5rem;
     font-weight: 700;
     line-height: 1;
 }
-.sensor-unit { font-size: 1rem; opacity: 0.7; }
+.sensor-unit { font-size: 0.9rem; opacity: 0.7; }
 .sensor-status {
-    margin-top: 0.8rem;
-    font-size: 0.8rem;
+    margin-top: 0.6rem;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.1em;
-    padding: 0.25rem 0.8rem;
+    padding: 0.2rem 0.7rem;
     border-radius: 99px;
     display: inline-block;
 }
-.status-normal { background: rgba(0,255,136,0.15); color: var(--accent-green); border: 1px solid rgba(0,255,136,0.3); }
-.status-warning { background: rgba(255,68,68,0.15); color: var(--accent-red); border: 1px solid rgba(255,68,68,0.3); }
-
-/* Info bar */
+.status-normal { background: rgba(0,255,136,0.12); color: #00ff88; border: 1px solid rgba(0,255,136,0.3); }
+.status-warning { background: rgba(255,68,68,0.12); color: #ff4444; border: 1px solid rgba(255,68,68,0.3); }
 .info-bar {
-    background: var(--bg-card2);
-    border: 1px solid var(--border);
+    background: #0a1f3d;
+    border: 1px solid rgba(0,212,255,0.2);
     border-radius: 12px;
-    padding: 1rem 1.5rem;
+    padding: 0.8rem 1.2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.8rem;
 }
 .info-item { text-align: center; }
-.info-item-label { font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; }
-.info-item-value { font-family: 'Orbitron', monospace; font-size: 1rem; color: var(--accent-blue); font-weight: 700; }
-
-/* Footer */
+.info-item-label { font-size: 0.65rem; color: #6a8caa; letter-spacing: 0.15em; text-transform: uppercase; }
+.info-item-value { font-family: 'Orbitron', monospace; font-size: 0.95rem; color: #00d4ff; font-weight: 700; }
+.section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: #6a8caa;
+    text-transform: uppercase;
+    border-left: 3px solid #00d4ff;
+    padding-left: 0.8rem;
+    margin: 1.5rem 0 1rem;
+}
 .footer {
     text-align: center;
-    padding: 1.5rem 0;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    border-top: 1px solid var(--border);
+    padding: 1.2rem 0;
+    color: #6a8caa;
+    font-size: 0.75rem;
+    border-top: 1px solid rgba(0,212,255,0.15);
     margin-top: 2rem;
     letter-spacing: 0.1em;
 }
-
-/* Sembunyikan elemen bawaan streamlit */
 #MainMenu, footer, header { visibility: hidden; }
 [data-testid="stToolbar"] { display: none; }
-
-/* Streamlit metric override */
-[data-testid="metric-container"] { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
-
 # ============================================================
-# FUNGSI BACKSOUND (load dari URL GitHub)
+# SESSION STATE
 # ============================================================
-
-def embed_audio_from_url(url: str, already_started: bool = False):
+if "data" not in st.session_state:
+    st.session_state.data = pd.DataFrame(
+        columns=["Waktu", "Suhu (°C)", "Kelembapan (%)", "Tekanan (hPa)"]
+    )
+if "audio_bytes" not in st.session_state:
     try:
-        response = requests.get(url)
-        audio_bytes = response.content
-        b64 = base64.b64encode(audio_bytes).decode()
-        html = f"""
-        <div style="
-            background: rgba(0,212,255,0.07);
-            border: 1px solid rgba(0,212,255,0.2);
-            border-radius: 12px;
-            padding: 0.8rem 1.2rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        ">
-            <span style="font-size:1.4rem;">🎵</span>
-            <span style="font-family:'Rajdhani',sans-serif; color:#6a8caa; font-size:0.85rem; letter-spacing:0.1em;">BACKSOUND</span>
-            <audio id="lab-audio" controls loop style="height:32px; flex:1; min-width:200px;">
-                <source src="data:audio/mp3;base64,{b64}" type="audio/mpeg">
-            </audio>
-        </div>
-        """
-        st.markdown(html, unsafe_allow_html=True)
+        resp = requests.get(URL_BACKSOUND)
+        st.session_state.audio_bytes = resp.content
     except:
-        st.warning("⚠️ Gagal memuat backsound. Cek URL di konfigurasi.")
-
-
-# ============================================================
-# SIMULASI DATA SENSOR (ganti dengan data sensor nyata)
-# ============================================================
-
-def baca_sensor():
-    """Simulasi pembacaan sensor. Ganti fungsi ini dengan data sensor asli."""
-    suhu = round(random.uniform(17, 28), 1)
-    kelembapan = round(random.uniform(38, 75), 1)
-    tekanan = round(random.uniform(985, 1025), 1)
-    return suhu, kelembapan, tekanan
-
-
-def cek_status(nilai, min_val, max_val):
-    return "NORMAL" if min_val <= nilai <= max_val else "⚠ PERINGATAN"
-
-
-def warna_nilai(nilai, min_val, max_val):
-    if min_val <= nilai <= max_val:
-        return "#00ff88"
-    return "#ff4444"
-
+        st.session_state.audio_bytes = None
 
 # ============================================================
-# RENDER HALAMAN
+# SIDEBAR
 # ============================================================
+with st.sidebar:
+    st.markdown("""
+    <div style="text-align:center; padding:0.8rem 0; border-bottom:1px solid rgba(0,212,255,0.2); margin-bottom:1rem;">
+        <div style="font-family:'Orbitron',monospace; font-size:0.9rem; color:#00d4ff; letter-spacing:0.1em;">⚙️ PENGATURAN</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Header
+    # Tombol refresh
+    st.markdown("**🔄 Ambil Data Sensor**")
+    if st.button("▶ Refresh Data Baru", use_container_width=True):
+        now_data = datetime.now(WIB)
+        suhu_baru = round(random.uniform(17, 28), 1)
+        kelembapan_baru = round(random.uniform(38, 75), 1)
+        tekanan_baru = round(random.uniform(985, 1025), 1)
+        new_row = pd.DataFrame({
+            "Waktu": [now_data.strftime("%H:%M:%S")],
+            "Suhu (°C)": [suhu_baru],
+            "Kelembapan (%)": [kelembapan_baru],
+            "Tekanan (hPa)": [tekanan_baru]
+        })
+        st.session_state.data = pd.concat(
+            [st.session_state.data, new_row], ignore_index=True
+        )
+
+    st.markdown("---")
+
+    # Pengaturan grafik
+    st.markdown("**📊 Tampilan Grafik**")
+    max_grafik = st.slider("Jumlah data di grafik", 5, 50, 15)
+
+    st.markdown("---")
+
+    # Download CSV
+    st.markdown("**⬇️ Download Data CSV**")
+    total = len(st.session_state.data)
+
+    if total > 0:
+        jumlah_download = st.number_input(
+            "Jumlah data yang didownload",
+            min_value=1,
+            max_value=total,
+            value=min(10, total),
+            step=1
+        )
+        pilihan = st.radio(
+            "Pilih rentang data",
+            ["Data Terbaru", "Data Terlama", "Semua Data"],
+            index=0
+        )
+        df = st.session_state.data
+        if pilihan == "Data Terbaru":
+            df_dl = df.tail(int(jumlah_download))
+        elif pilihan == "Data Terlama":
+            df_dl = df.head(int(jumlah_download))
+        else:
+            df_dl = df
+
+        now_str = datetime.now(WIB).strftime("%Y%m%d_%H%M%S")
+        csv = df_dl.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label=f"⬇️ Download {len(df_dl)} Data (.csv)",
+            data=csv,
+            file_name=f"lab_data_{now_str}.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+        st.caption(f"Total data tersimpan: **{total}** record")
+    else:
+        st.info("Belum ada data. Klik 'Refresh Data Baru' dulu.")
+
+    st.markdown("---")
+
+    # Audio
+    st.markdown("**🎵 Backsound**")
+    if st.session_state.audio_bytes:
+        st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=True)
+    else:
+        st.warning("Gagal load audio. Cek URL_BACKSOUND.")
+
+# ============================================================
+# HEADER
+# ============================================================
 st.markdown(f"""
 <div class="header-wrap">
     <div class="header-title">🔬 {JUDUL_APLIKASI}</div>
@@ -254,11 +289,11 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Backsound
-embed_audio_from_url(URL_BACKSOUND)
-
-# Info bar
-now = datetime.now(pytz.timezone('Asia/Jakarta'))
+# ============================================================
+# INFO BAR
+# ============================================================
+now = datetime.now(WIB)
+total_data = len(st.session_state.data)
 st.markdown(f"""
 <div class="info-bar">
     <div class="info-item">
@@ -266,12 +301,12 @@ st.markdown(f"""
         <div class="info-item-value">{now.strftime('%d %b %Y')}</div>
     </div>
     <div class="info-item">
-        <div class="info-item-label">Waktu</div>
+        <div class="info-item-label">Waktu (WIB)</div>
         <div class="info-item-value">{now.strftime('%H:%M:%S')}</div>
     </div>
     <div class="info-item">
-        <div class="info-item-label">Refresh</div>
-        <div class="info-item-value">Tiap {INTERVAL_REFRESH}s</div>
+        <div class="info-item-label">Total Data</div>
+        <div class="info-item-value">{total_data} Record</div>
     </div>
     <div class="info-item">
         <div class="info-item-label">Status Sistem</div>
@@ -280,108 +315,107 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Baca sensor
-suhu, kelembapan, tekanan = baca_sensor()
+# ============================================================
+# KARTU SENSOR
+# ============================================================
+if not st.session_state.data.empty:
+    latest = st.session_state.data.iloc[-1]
+    suhu = latest["Suhu (°C)"]
+    kelembapan = latest["Kelembapan (%)"]
+    tekanan = latest["Tekanan (hPa)"]
+else:
+    suhu = kelembapan = tekanan = "-"
 
-status_suhu = cek_status(suhu, BATAS_SUHU_MIN, BATAS_SUHU_MAX)
-status_kelembapan = cek_status(kelembapan, BATAS_KELEMBAPAN_MIN, BATAS_KELEMBAPAN_MAX)
-status_tekanan = cek_status(tekanan, BATAS_TEKANAN_MIN, BATAS_TEKANAN_MAX)
+def cek(nilai, mn, mx):
+    if nilai == "-":
+        return "–", "#6a8caa", ""
+    if mn <= nilai <= mx:
+        return "NORMAL", "#00ff88", "status-normal"
+    return "⚠ PERINGATAN", "#ff4444", "status-warning"
 
-warn_suhu = "warning" if "PERINGATAN" in status_suhu else ""
-warn_kelembapan = "warning" if "PERINGATAN" in status_kelembapan else ""
-warn_tekanan = "warning" if "PERINGATAN" in status_tekanan else ""
+st_l, st_w, st_k = cek(suhu, BATAS_SUHU_MIN, BATAS_SUHU_MAX)
+kl_l, kl_w, kl_k = cek(kelembapan, BATAS_KELEMBAPAN_MIN, BATAS_KELEMBAPAN_MAX)
+tk_l, tk_w, tk_k = cek(tekanan, BATAS_TEKANAN_MIN, BATAS_TEKANAN_MAX)
 
-warna_suhu = warna_nilai(suhu, BATAS_SUHU_MIN, BATAS_SUHU_MAX)
-warna_kelembapan = warna_nilai(kelembapan, BATAS_KELEMBAPAN_MIN, BATAS_KELEMBAPAN_MAX)
-warna_tekanan = warna_nilai(tekanan, BATAS_TEKANAN_MIN, BATAS_TEKANAN_MAX)
-
-kelas_status_suhu = "status-normal" if not warn_suhu else "status-warning"
-kelas_status_kelembapan = "status-normal" if not warn_kelembapan else "status-warning"
-kelas_status_tekanan = "status-normal" if not warn_tekanan else "status-warning"
-
-# Kartu sensor
-col1, col2, col3 = st.columns(3)
-
-with col1:
+st.markdown('<div class="section-title">📡 Data Sensor Real-time</div>', unsafe_allow_html=True)
+c1, c2, c3 = st.columns(3)
+with c1:
     st.markdown(f"""
-    <div class="sensor-card {warn_suhu}">
+    <div class="sensor-card {'warning' if 'PERINGATAN' in st_l else ''}">
         <div class="sensor-icon">🌡️</div>
         <div class="sensor-label">Suhu</div>
-        <div class="sensor-value" style="color:{warna_suhu};">
-            {suhu}<span class="sensor-unit"> °C</span>
-        </div>
-        <div style="color:{warna_suhu}; font-size:0.75rem; margin-top:0.5rem; opacity:0.7;">
-            Normal: {BATAS_SUHU_MIN}–{BATAS_SUHU_MAX} °C
-        </div>
-        <span class="sensor-status {kelas_status_suhu}">{status_suhu}</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col2:
+        <div class="sensor-value" style="color:{st_w};">{suhu}<span class="sensor-unit"> °C</span></div>
+        <div style="color:{st_w}; font-size:0.7rem; margin-top:0.4rem; opacity:0.7;">Normal: {BATAS_SUHU_MIN}–{BATAS_SUHU_MAX} °C</div>
+        <span class="sensor-status {st_k}">{st_l}</span>
+    </div>""", unsafe_allow_html=True)
+with c2:
     st.markdown(f"""
-    <div class="sensor-card {warn_kelembapan}">
+    <div class="sensor-card {'warning' if 'PERINGATAN' in kl_l else ''}">
         <div class="sensor-icon">💧</div>
         <div class="sensor-label">Kelembapan</div>
-        <div class="sensor-value" style="color:{warna_kelembapan};">
-            {kelembapan}<span class="sensor-unit"> %</span>
-        </div>
-        <div style="color:{warna_kelembapan}; font-size:0.75rem; margin-top:0.5rem; opacity:0.7;">
-            Normal: {BATAS_KELEMBAPAN_MIN}–{BATAS_KELEMBAPAN_MAX} %
-        </div>
-        <span class="sensor-status {kelas_status_kelembapan}">{status_kelembapan}</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col3:
+        <div class="sensor-value" style="color:{kl_w};">{kelembapan}<span class="sensor-unit"> %</span></div>
+        <div style="color:{kl_w}; font-size:0.7rem; margin-top:0.4rem; opacity:0.7;">Normal: {BATAS_KELEMBAPAN_MIN}–{BATAS_KELEMBAPAN_MAX} %</div>
+        <span class="sensor-status {kl_k}">{kl_l}</span>
+    </div>""", unsafe_allow_html=True)
+with c3:
     st.markdown(f"""
-    <div class="sensor-card {warn_tekanan}">
+    <div class="sensor-card {'warning' if 'PERINGATAN' in tk_l else ''}">
         <div class="sensor-icon">🔵</div>
         <div class="sensor-label">Tekanan Udara</div>
-        <div class="sensor-value" style="color:{warna_tekanan};">
-            {tekanan}<span class="sensor-unit"> hPa</span>
-        </div>
-        <div style="color:{warna_tekanan}; font-size:0.75rem; margin-top:0.5rem; opacity:0.7;">
-            Normal: {BATAS_TEKANAN_MIN}–{BATAS_TEKANAN_MAX} hPa
-        </div>
-        <span class="sensor-status {kelas_status_tekanan}">{status_tekanan}</span>
-    </div>
-    """, unsafe_allow_html=True)
+        <div class="sensor-value" style="color:{tk_w};">{tekanan}<span class="sensor-unit"> hPa</span></div>
+        <div style="color:{tk_w}; font-size:0.7rem; margin-top:0.4rem; opacity:0.7;">Normal: {BATAS_TEKANAN_MIN}–{BATAS_TEKANAN_MAX} hPa</div>
+        <span class="sensor-status {tk_k}">{tk_l}</span>
+    </div>""", unsafe_allow_html=True)
 
-# Spacer
-st.markdown("<br>", unsafe_allow_html=True)
-
-# Ringkasan kondisi
-semua_normal = all("PERINGATAN" not in s for s in [status_suhu, status_kelembapan, status_tekanan])
-if semua_normal:
-    st.markdown("""
-    <div style="background:rgba(0,255,136,0.07); border:1px solid rgba(0,255,136,0.25);
-    border-radius:12px; padding:1rem 1.5rem; text-align:center; color:#00ff88;
-    font-family:'Orbitron',monospace; font-size:0.9rem; letter-spacing:0.15em;">
-        ✅ SEMUA PARAMETER DALAM BATAS NORMAL
-    </div>
-    """, unsafe_allow_html=True)
+# ============================================================
+# STATUS KESELURUHAN
+# ============================================================
+st.markdown("")
+if suhu == "-":
+    st.markdown("""<div style="background:rgba(0,212,255,0.07); border:1px solid rgba(0,212,255,0.2);
+    border-radius:12px; padding:1rem; text-align:center; color:#6a8caa;
+    font-family:'Orbitron',monospace; font-size:0.8rem; letter-spacing:0.15em;">
+    ℹ️ KLIK "REFRESH DATA BARU" DI SIDEBAR UNTUK MULAI MONITORING</div>""", unsafe_allow_html=True)
+elif all("PERINGATAN" not in x for x in [st_l, kl_l, tk_l]):
+    st.markdown("""<div style="background:rgba(0,255,136,0.07); border:1px solid rgba(0,255,136,0.25);
+    border-radius:12px; padding:1rem; text-align:center; color:#00ff88;
+    font-family:'Orbitron',monospace; font-size:0.8rem; letter-spacing:0.15em;">
+    ✅ SEMUA PARAMETER DALAM BATAS NORMAL</div>""", unsafe_allow_html=True)
 else:
-    sensor_warn = []
-    if "PERINGATAN" in status_suhu: sensor_warn.append("Suhu")
-    if "PERINGATAN" in status_kelembapan: sensor_warn.append("Kelembapan")
-    if "PERINGATAN" in status_tekanan: sensor_warn.append("Tekanan")
-    st.markdown(f"""
-    <div style="background:rgba(255,68,68,0.07); border:1px solid rgba(255,68,68,0.3);
-    border-radius:12px; padding:1rem 1.5rem; text-align:center; color:#ff4444;
-    font-family:'Orbitron',monospace; font-size:0.9rem; letter-spacing:0.15em;">
-        ⚠️ PERINGATAN: {' · '.join(sensor_warn)} DILUAR BATAS NORMAL
-    </div>
-    """, unsafe_allow_html=True)
+    warns = []
+    if "PERINGATAN" in st_l: warns.append("Suhu")
+    if "PERINGATAN" in kl_l: warns.append("Kelembapan")
+    if "PERINGATAN" in tk_l: warns.append("Tekanan")
+    st.markdown(f"""<div style="background:rgba(255,68,68,0.07); border:1px solid rgba(255,68,68,0.3);
+    border-radius:12px; padding:1rem; text-align:center; color:#ff4444;
+    font-family:'Orbitron',monospace; font-size:0.8rem; letter-spacing:0.15em;">
+    ⚠️ PERINGATAN: {' · '.join(warns)} DILUAR BATAS NORMAL</div>""", unsafe_allow_html=True)
 
-# Footer
+# ============================================================
+# GRAFIK
+# ============================================================
+if not st.session_state.data.empty:
+    st.markdown('<div class="section-title">📈 Grafik Monitoring</div>', unsafe_allow_html=True)
+    df_chart = st.session_state.data.tail(max_grafik).set_index("Waktu")
+    st.line_chart(df_chart, use_container_width=True, height=300)
+
+# ============================================================
+# TABEL DATA
+# ============================================================
+if not st.session_state.data.empty:
+    st.markdown('<div class="section-title">📋 Tabel Data Terbaru</div>', unsafe_allow_html=True)
+    st.dataframe(
+        st.session_state.data.tail(max_grafik)[::-1].reset_index(drop=True),
+        use_container_width=True,
+        hide_index=True
+    )
+
+# ============================================================
+# FOOTER
+# ============================================================
 st.markdown(f"""
 <div class="footer">
     🔬 {NAMA_LABORATORIUM} &nbsp;|&nbsp; {JUDUL_APLIKASI} &nbsp;|&nbsp;
-    Diperbarui: {now.strftime('%d/%m/%Y %H:%M:%S')}
+    {now.strftime('%d/%m/%Y %H:%M')} WIB
 </div>
 """, unsafe_allow_html=True)
-
-# Auto-refresh
-placeholder = st.empty()
-time.sleep(INTERVAL_REFRESH)
-st.rerun()
