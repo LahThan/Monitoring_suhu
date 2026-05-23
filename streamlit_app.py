@@ -180,6 +180,7 @@ html, body, [data-testid="stAppViewContainer"] {
     letter-spacing: 0.1em;
 }
 [data-testid="collapsedControl"] { display: none !important; }
+button[data-testid="baseButton-header"] { display: none !important; }
 section[data-testid="stSidebar"] {
     min-width: 300px !important;
     max-width: 300px !important;
