@@ -291,9 +291,9 @@ with st.sidebar:
 now_data = datetime.now(WIB)
 selisih = (now_data - st.session_state.last_refresh).total_seconds()
 if selisih >= 10:
-    suhu_baru = round(random.uniform(17, 28), 1)
-    kelembapan_baru = round(random.uniform(38, 75), 1)
-    tekanan_baru = round(random.uniform(985, 1025), 1)
+    suhu_baru = round(random.uniform(20, 25), 1)
+    kelembapan_baru = round(random.uniform(40, 60), 1)
+    tekanan_baru = round(random.uniform(990, 1020), 1)
     new_row = pd.DataFrame({
         "Waktu": [now_data.strftime("%H:%M:%S")],
         "Suhu (°C)": [suhu_baru],
