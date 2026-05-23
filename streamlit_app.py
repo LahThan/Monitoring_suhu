@@ -3,6 +3,7 @@ import random
 import time
 import base64
 from datetime import datetime
+import requests
 import pytz
 
 JUDUL_APLIKASI = "Lab Environment Monitor"         
