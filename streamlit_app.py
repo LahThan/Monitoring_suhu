@@ -179,13 +179,21 @@ html, body, [data-testid="stAppViewContainer"] {
     margin-top: 2rem;
     letter-spacing: 0.1em;
 }
-[data-testid="collapsedControl"] { display: none !important; }
-button[data-testid="baseButton-header"] { display: none !important; }
-section[data-testid="stSidebar"] {
-    min-width: 300px !important;
-    max-width: 300px !important;
-    transform: none !important;
-    display: block !important;
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: rgba(0,212,255,0.15) !important;
+    border: 1px solid rgba(0,212,255,0.4) !important;
+    border-radius: 8px !important;
+}
+[data-testid="stSidebarResizeHandle"] {
+    display: none !important;
+    pointer-events: none !important;
+}
+div[class*="ResizeHandle"] {
+    display: none !important;
+    pointer-events: none !important;
 }
 </style>
 """, unsafe_allow_html=True)
