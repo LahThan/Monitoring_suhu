@@ -296,16 +296,8 @@ with st.sidebar:
 
     # Kritik & Saran
     st.markdown("---")
-    st.switch_page_button = st.markdown("""
-    <a href="/kritik_saran" target="_self" style="
-        display:block; text-align:center;
-        background:rgba(0,212,255,0.1);
-        border:1px solid rgba(0,212,255,0.3);
-        border-radius:8px; padding:0.5rem;
-        color:#00d4ff; text-decoration:none;
-        font-weight:600; letter-spacing:0.05em;
-    ">💬 Saran & Kritik</a>
-    """, unsafe_allow_html=True)
+    if st.button("💬 Saran & Kritik", use_container_width=True, key="btn_saran"):
+        st.switch_page("pages/kritik_saran.py")
         
 
 # ============================================================
