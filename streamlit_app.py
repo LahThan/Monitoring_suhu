@@ -289,11 +289,10 @@ with st.sidebar:
 
     # Audio
     st.markdown("**🎵 Backsound**")
-    if st.session_state.audio_bytes:
-        st.audio(st.session_state.audio_bytes, format="audio/mp3")
+   if st.session_state.audio_bytes:
+        st.caption(f"Ukuran file: {len(st.session_state.audio_bytes)} bytes")
     else:
-        st.warning("Gagal load audio. Cek URL_BACKSOUND.")
-
+        st.error("audio_bytes kosong!")
 # ============================================================
 # AUTO REFRESH DATA SETIAP 10 DETIK
 # ============================================================
