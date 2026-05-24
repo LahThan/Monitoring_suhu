@@ -296,7 +296,8 @@ with st.sidebar:
 
     # Kritik & Saran
     if st.button("💬 Saran & Kritik", use_container_width=True, key="btn_saran"):
-        st.switch_page("pages/kritik_saran.py")
+        st.session_state.switch_to_saran = True
+        st.rerun()
         
 
 # ============================================================
