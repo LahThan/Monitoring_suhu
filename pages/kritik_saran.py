@@ -3,10 +3,9 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-EMAIL_PENERIMA = "fthankrndi@gmail.com"   # ✏️ Email pemilik
-EMAIL_PENGIRIM = "kelompok.12.lpk@gmail.com"   # ✏️ Gmail pengirim
-EMAIL_APP_PASSWORD = "fhug rnbi aaeg tqua"  # ✏️ Gmail App Password
-
+EMAIL_PENERIMA = st.secrets["EMAIL_PENERIMA"]
+EMAIL_PENGIRIM = st.secrets["EMAIL_PENGIRIM"]
+EMAIL_APP_PASSWORD = st.secrets["EMAIL_APP_PASSWORD"]
 st.set_page_config(page_title="Saran & Kritik", page_icon="💬", layout="centered")
 
 st.markdown("## 💬 Saran & Kritik")
