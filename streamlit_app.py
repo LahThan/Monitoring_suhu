@@ -295,9 +295,17 @@ with st.sidebar:
         st.warning("Gagal load audio. Cek URL_BACKSOUND.")
 
     # Kritik & Saran
-st.markdown("---")
-st.page_link("pages/kritik_saran.py", label="💬 Saran & Kritik", use_container_width=True)
-
+    st.markdown("---")
+    st.switch_page_button = st.markdown("""
+    <a href="/kritik_saran" target="_self" style="
+        display:block; text-align:center;
+        background:rgba(0,212,255,0.1);
+        border:1px solid rgba(0,212,255,0.3);
+        border-radius:8px; padding:0.5rem;
+        color:#00d4ff; text-decoration:none;
+        font-weight:600; letter-spacing:0.05em;
+    ">💬 Saran & Kritik</a>
+    """, unsafe_allow_html=True)
         
 
 # ============================================================
