@@ -300,9 +300,20 @@ with st.sidebar:
 now_data = datetime.now(WIB)
 selisih = (now_data - st.session_state.last_refresh).total_seconds()
 if selisih >= 10:
-    suhu_baru = round(random.uniform(20, 25), 1)
-    kelembapan_baru = round(random.uniform(40, 60), 1)
-    tekanan_baru = round(random.uniform(990, 1020), 1)
+    # Ambil nilai terakhir, naik/turun sedikit (realistis)
+    if not st.session_state.data.empty:
+        last = st.session_state.data.iloc[-1]
+        suhu_baru = round(last["Suhu (°C)"] + random.uniform(-0.3, 0.3), 1)
+        kelembapan_baru = round(last["Kelembapan (%)"] + random.uniform(-0.5, 0.5), 1)
+        tekanan_baru = round(last["Tekanan (hPa)"] + random.uniform(-0.3, 0.3), 1)
+        # Batasi supaya tidak keluar range wajar
+        suhu_baru = max(17.0, min(30.0, suhu_baru))
+        kelembapan_baru = max(35.0, min(80.0, kelembapan_baru))
+        tekanan_baru = max(985.0, min(1025.0, tekanan_baru))
+    else:
+        suhu_baru = round(random.uniform(21, 24), 1)
+        kelembapan_baru = round(random.uniform(45, 55), 1)
+        tekanan_baru = round(random.uniform(1000, 1010), 1)
     new_row = pd.DataFrame({
         "Waktu": [now_data.strftime("%H:%M:%S")],
         "Suhu (°C)": [suhu_baru],
