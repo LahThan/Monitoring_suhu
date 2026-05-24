@@ -290,7 +290,12 @@ with st.sidebar:
     # Audio
     st.markdown("**🎵 Backsound**")
     if st.session_state.audio_bytes:
-        st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=True, autoplay=True)
+        b64 = base64.b64encode(st.session_state.audio_bytes).decode()
+        st.markdown(f"""
+        <audio controls loop style="width:100%; margin-top:0.5rem;">
+            <source src="data:audio/mp3;base64,{b64}" type="audio/mpeg">
+        </audio>
+        """, unsafe_allow_html=True)
     else:
         st.warning("Gagal load audio. Cek URL_BACKSOUND.")
 
