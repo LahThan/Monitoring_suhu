@@ -295,7 +295,7 @@ with st.sidebar:
         st.warning("Gagal load audio. Cek URL_BACKSOUND.")
 
     # Kritik & Saran
-   st.markdown("---")
+    st.markdown("---")
     st.page_link("pages/kritik_saran.py", label="💬 Saran & Kritik", use_container_width=True)
 
         
