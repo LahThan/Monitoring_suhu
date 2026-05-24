@@ -296,7 +296,7 @@ with st.sidebar:
 
     # Kritik & Saran
     st.markdown("""
-    <a href="./kritik_saran" target="_self" style="
+    <a href="?page=kritik_saran" target="_self" style="
         display:block;
         text-align:center;
         background:rgba(0,212,255,0.1);
