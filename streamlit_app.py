@@ -201,7 +201,8 @@ div[class*="ResizeHandle"] {
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
 [data-testid="stToolbar"] { display: none; }
-[data-testid="stHeader"] { display: none; }
+[data-testid="stDeployButton"] { display: none; }
+header [data-testid="stActionButtonIcon"] { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
