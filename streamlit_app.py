@@ -15,6 +15,9 @@ JUDUL_APLIKASI = "Lab Environment Monitor"                    # ✏️ Ganti jud
 SUBJUDUL = "Sistem Monitoring Suhu, Kelembapan & Tekanan"     # ✏️ Ganti subjudul
 NAMA_LABORATORIUM = "Laboratorium Kimia Analitik"             # ✏️ Ganti nama lab
 URL_BACKSOUND = "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound.mp3"  # ✏️ Ganti URL lagu
+EMAIL_PENERIMA = "fthankrndi@gmail.com"   # ✏️ Email pemilik
+EMAIL_PENGIRIM = "kelompok.12.lpk@gmail.com"   # ✏️ Gmail pengirim
+EMAIL_APP_PASSWORD = "fhug rnbi aaeg tqua"  # ✏️ Gmail App Password
 
 BATAS_SUHU_MIN = 18.0       # ✏️ Suhu minimum normal (°C)
 BATAS_SUHU_MAX = 26.0       # ✏️ Suhu maksimum normal (°C)
@@ -293,6 +296,36 @@ with st.sidebar:
         st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=True)
     else:
         st.warning("Gagal load audio. Cek URL_BACKSOUND.")
+
+    # Kritik & Saran
+    st.markdown("---")
+    st.markdown("**💬 Saran & Kritik**")
+    with st.form("form_saran", clear_on_submit=True):
+        nama = st.text_input("Nama", placeholder="Nama kamu")
+        pesan = st.text_area("Pesan", placeholder="Tulis saran atau kritik...")
+        kirim = st.form_submit_button("📨 Kirim", use_container_width=True)
+        if kirim:
+            if nama and pesan:
+                try:
+                    import smtplib
+                    from email.mime.text import MIMEText
+                    from email.mime.multipart import MIMEMultipart
+                    msg = MIMEMultipart()
+                    msg["From"] = EMAIL_PENGIRIM
+                    msg["To"] = EMAIL_PENERIMA
+                    msg["Subject"] = f"[Lab Monitor] Saran dari {nama}"
+                    body = f"Nama: {nama}\n\nPesan:\n{pesan}"
+                    msg.attach(MIMEText(body, "plain"))
+                    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                        server.login(EMAIL_PENGIRIM, EMAIL_APP_PASSWORD)
+                        server.sendmail(EMAIL_PENGIRIM, EMAIL_PENERIMA, msg.as_string())
+                    st.success("✅ Pesan terkirim!")
+                except Exception as e:
+                    st.error(f"❌ Gagal kirim: {e}")
+            else:
+                st.warning("⚠️ Isi nama dan pesan dulu!")
+
+        
 
 # ============================================================
 # AUTO REFRESH DATA SETIAP 10 DETIK
