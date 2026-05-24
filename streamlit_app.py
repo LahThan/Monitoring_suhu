@@ -471,4 +471,4 @@ st.markdown(f"""
 # AUTO RERUN SETIAP 10 DETIK
 # ============================================================
 time.sleep(10)
-st.rerun(scope="fragment") if hasattr(st, "rerun") else st.rerun()
+st.rerun()
