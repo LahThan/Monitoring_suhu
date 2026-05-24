@@ -9,7 +9,7 @@ from datetime import datetime, timezone, timedelta
 WIB = timezone(timedelta(hours=7))
 
 # ============================================================
-# KONFIGURASI JUDUL
+# 🔧 KONFIGURASI — UBAH SESUAI KEBUTUHAN
 # ============================================================
 JUDUL_APLIKASI = "Lab Environment Monitor"                    # ✏️ Ganti judul
 SUBJUDUL = "Sistem Monitoring Suhu, Kelembapan & Tekanan"     # ✏️ Ganti subjudul
@@ -289,10 +289,11 @@ with st.sidebar:
 
     # Audio
     st.markdown("**🎵 Backsound**")
-   if st.session_state.audio_bytes:
-        st.caption(f"Ukuran file: {len(st.session_state.audio_bytes)} bytes")
+    if st.session_state.audio_bytes:
+        st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=True)
     else:
-        st.error("audio_bytes kosong!")
+        st.warning("Gagal load audio. Cek URL_BACKSOUND.")
+
 # ============================================================
 # AUTO REFRESH DATA SETIAP 10 DETIK
 # ============================================================
