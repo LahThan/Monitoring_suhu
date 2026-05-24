@@ -472,6 +472,13 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+if "switch_to_saran" not in st.session_state:
+    st.session_state.switch_to_saran = False
+
+if st.session_state.switch_to_saran:
+    st.session_state.switch_to_saran = False
+    st.switch_page("pages/kritik_saran.py")
+
 # ============================================================
 # AUTO RERUN SETIAP 10 DETIK
 # ============================================================
