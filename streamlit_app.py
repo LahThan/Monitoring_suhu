@@ -302,10 +302,12 @@ with st.sidebar:
     st.markdown("**💬 Saran & Kritik**")
     with st.form("form_saran", clear_on_submit=True):
         nama = st.text_input("Nama", placeholder="Nama kamu")
-        pesan = st.text_area("Pesan", placeholder="Tulis saran atau kritik...")
-        kirim = st.form_submit_button("📨 Kirim", use_container_width=True)
+        email_pengirim_user = st.text_input("Email", placeholder="Email kamu")
+        subject = st.text_input("Subject", placeholder="Subjek pesan")
+        pesan = st.text_area("Message", placeholder="Tulis saran atau kritik...", height=150)
+        kirim = st.form_submit_button("📨 Submit", use_container_width=True)
         if kirim:
-            if nama and pesan:
+            if nama and email_pengirim_user and subject and pesan:
                 try:
                     import smtplib
                     from email.mime.text import MIMEText
@@ -313,17 +315,17 @@ with st.sidebar:
                     msg = MIMEMultipart()
                     msg["From"] = EMAIL_PENGIRIM
                     msg["To"] = EMAIL_PENERIMA
-                    msg["Subject"] = f"[Lab Monitor] Saran dari {nama}"
-                    body = f"Nama: {nama}\n\nPesan:\n{pesan}"
+                    msg["Subject"] = f"[Lab Monitor] {subject}"
+                    body = f"Nama: {nama}\nEmail: {email_pengirim_user}\nSubject: {subject}\n\nPesan:\n{pesan}"
                     msg.attach(MIMEText(body, "plain"))
                     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
                         server.login(EMAIL_PENGIRIM, EMAIL_APP_PASSWORD)
                         server.sendmail(EMAIL_PENGIRIM, EMAIL_PENERIMA, msg.as_string())
-                    st.success("✅ Pesan terkirim!")
+                    st.success("✅ Pesan berhasil terkirim!")
                 except Exception as e:
                     st.error(f"❌ Gagal kirim: {e}")
             else:
-                st.warning("⚠️ Isi nama dan pesan dulu!")
+                st.warning("⚠️ Semua field harus diisi!")
 
         
 
