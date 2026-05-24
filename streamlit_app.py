@@ -295,23 +295,8 @@ with st.sidebar:
         st.warning("Gagal load audio. Cek URL_BACKSOUND.")
 
     # Kritik & Saran
-    st.markdown("""
     if st.button("💬 Saran & Kritik", use_container_width=True, key="btn_saran"):
         st.switch_page("pages/kritik_saran.py")
-        display:block;
-        text-align:center;
-        background:rgba(0,212,255,0.1);
-        border:1px solid rgba(0,212,255,0.3);
-        border-radius:8px;
-        padding:0.5rem;
-        color:#00d4ff;
-        text-decoration:none;
-        font-weight:600;
-        font-family:'Rajdhani',sans-serif;
-        letter-spacing:0.05em;
-        margin-top:0.5rem;
-    ">💬 Saran &amp; Kritik</a>
-    """, unsafe_allow_html=True)
         
 
 # ============================================================
