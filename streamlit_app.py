@@ -198,6 +198,10 @@ div[class*="ResizeHandle"] {
     display: none !important;
     pointer-events: none !important;
 }
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+[data-testid="stToolbar"] { display: none; }
+[data-testid="stHeader"] { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
