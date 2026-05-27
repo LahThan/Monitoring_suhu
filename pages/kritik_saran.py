@@ -7,7 +7,7 @@ EMAIL_PENERIMA = st.secrets["EMAIL_PENERIMA"]
 EMAIL_PENGIRIM = st.secrets["EMAIL_PENGIRIM"]
 EMAIL_APP_PASSWORD = st.secrets["EMAIL_APP_PASSWORD"]
 
-st.set_page_config(page_title="Saran & Kritik", page_icon="💬", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Saran & Kritik", page_icon="💬", layout="centered")
 
 st.markdown("""
 <style>
@@ -20,72 +20,43 @@ html, body, [data-testid="stAppViewContainer"] {
 [data-testid="stAppViewContainer"] {
     background: radial-gradient(ellipse at 20% 0%, #0a1f4d 0%, #040d1a 60%) !important;
 }
-[data-testid="stSidebar"] {
-    background: #071428 !important;
-    border-right: 1px solid rgba(0,212,255,0.15) !important;
-}
 [data-testid="stSidebarNav"] { display: none !important; }
+[data-testid="stSidebar"] { display: none !important; }
 footer { visibility: hidden; }
 [data-testid="stToolbar"] { display: none; }
-[data-testid="stSidebarResizeHandle"] { display: none !important; }
-[data-testid="collapsedControl"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    background: rgba(0,212,255,0.15) !important;
-    border: 1px solid rgba(0,212,255,0.4) !important;
-    border-radius: 8px !important;
-    position: fixed !important;
-    top: 0.5rem !important;
-    left: 0.5rem !important;
-    z-index: 9999 !important;
-}
 </style>
 """, unsafe_allow_html=True)
 
-# Sidebar navigasi
-with st.sidebar:
-    st.markdown("""
-    <div style="text-align:center; padding:0.8rem 0; border-bottom:1px solid rgba(0,212,255,0.2); margin-bottom:1rem;">
-        <div style="font-family:'Orbitron',monospace; font-size:0.9rem; color:#00d4ff;">🗂️ NAVIGASI</div>
-    </div>
-    """, unsafe_allow_html=True)
-    st.page_link("streamlit_app.py", label="🏠 Dashboard Utama", use_container_width=True)
-    st.page_link("pages/kritik_saran.py", label="💬 Kritik & Saran", use_container_width=True)
+# Tombol kembali
+st.page_link("streamlit_app.py", label="🏠 Kembali ke Dashboard Utama", use_container_width=True)
 
-# Tombol buka sidebar
-if st.button("☰ Buka Menu Navigasi"):
-    st.session_state["sidebar_open"] = True
-    st.rerun()
+st.markdown("---")
+st.markdown("## 💬 Saran & Kritik")
+st.markdown("Sampaikan saran atau kritik kamu untuk pengembangan aplikasi ini.")
+st.divider()
 
-# Konten utama - dibatasi lebar supaya tidak terlalu lebar
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    st.markdown("## 💬 Saran & Kritik")
-    st.markdown("Sampaikan saran atau kritik kamu untuk pengembangan aplikasi ini.")
-    st.divider()
+with st.form("form_saran", clear_on_submit=True):
+    nama = st.text_input("Nama", placeholder="Nama kamu")
+    email_user = st.text_input("Email", placeholder="Email kamu")
+    subject = st.text_input("Subject", placeholder="Subjek pesan")
+    pesan = st.text_area("Message", placeholder="Tulis saran atau kritik...", height=200)
+    kirim = st.form_submit_button("📨 Submit", use_container_width=True)
 
-    with st.form("form_saran", clear_on_submit=True):
-        nama = st.text_input("Nama", placeholder="Nama kamu")
-        email_user = st.text_input("Email", placeholder="Email kamu")
-        subject = st.text_input("Subject", placeholder="Subjek pesan")
-        pesan = st.text_area("Message", placeholder="Tulis saran atau kritik...", height=200)
-        kirim = st.form_submit_button("📨 Submit", use_container_width=True)
+    if kirim:
+        if nama and email_user and subject and pesan:
+            try:
+                msg = MIMEMultipart()
+                msg["From"] = EMAIL_PENGIRIM
+                msg["To"] = EMAIL_PENERIMA
+                msg["Subject"] = f"[Lab Monitor] {subject}"
+                body = f"Nama: {nama}\nEmail: {email_user}\nSubject: {subject}\n\nPesan:\n{pesan}"
+                msg.attach(MIMEText(body, "plain"))
+                with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                    server.login(EMAIL_PENGIRIM, EMAIL_APP_PASSWORD)
+                    server.sendmail(EMAIL_PENGIRIM, EMAIL_PENERIMA, msg.as_string())
+                st.success("✅ Pesan berhasil terkirim!")
+            except Exception as e:
+                st.error(f"❌ Gagal kirim: {e}")
+        else:
+            st.warning("⚠️ Semua field harus diisi!")
 
-        if kirim:
-            if nama and email_user and subject and pesan:
-                try:
-                    msg = MIMEMultipart()
-                    msg["From"] = EMAIL_PENGIRIM
-                    msg["To"] = EMAIL_PENERIMA
-                    msg["Subject"] = f"[Lab Monitor] {subject}"
-                    body = f"Nama: {nama}\nEmail: {email_user}\nSubject: {subject}\n\nPesan:\n{pesan}"
-                    msg.attach(MIMEText(body, "plain"))
-                    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-                        server.login(EMAIL_PENGIRIM, EMAIL_APP_PASSWORD)
-                        server.sendmail(EMAIL_PENGIRIM, EMAIL_PENERIMA, msg.as_string())
-                    st.success("✅ Pesan berhasil terkirim!")
-                except Exception as e:
-                    st.error(f"❌ Gagal kirim: {e}")
-            else:
-                st.warning("⚠️ Semua field harus diisi!")
