@@ -290,12 +290,22 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # Audio
+   # Audio
     st.markdown("**🎵 Backsound**")
     if st.session_state.audio_bytes:
         st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=True)
     else:
         st.warning("Gagal load audio. Cek URL_BACKSOUND.")
+
+    st.markdown("---")
+
+    # Navigasi halaman
+    st.markdown("**🗂️ Navigasi**")
+    st.page_link("streamlit_app.py", label="🏠 Dashboard Utama", use_container_width=True)
+    st.page_link("pages/kritik_saran.py", label="💬 Kritik & Saran", use_container_width=True)
+
+
+# ============================================================
         
 
 # ============================================================
