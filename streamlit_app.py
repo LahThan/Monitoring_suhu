@@ -304,6 +304,7 @@ with st.sidebar:
     st.markdown("**🗂️ Navigasi**")
     st.page_link("streamlit_app.py", label="🏠 Dashboard Utama", use_container_width=True)
     st.page_link("pages/kritik_saran.py", label="💬 Kritik & Saran", use_container_width=True)
+    st.page_link("pages/tentang_kami.py", label="👥 Tentang Kami", use_container_width=True)
 
 
 # ============================================================
