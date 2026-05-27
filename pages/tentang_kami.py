@@ -135,7 +135,7 @@ st.markdown("""
 st.markdown(f"""
 <div class="card">
     <div style="font-family:'Orbitron',monospace; font-size:0.8rem; color:#00d4ff; letter-spacing:0.15em; margin-bottom:1rem;">
-    🎓 INFO TIM</div>
+    🎓 INFO KELOMPOK</div>
     <div class="info-row">
         <div class="info-label">Program Studi</div>
         <div class="info-value">Analisis Kimia</div>
@@ -159,7 +159,7 @@ st.markdown(f"""
 st.markdown("""
 <div class="card">
     <div style="font-family:'Orbitron',monospace; font-size:0.8rem; color:#00d4ff; letter-spacing:0.15em; margin-bottom:1rem;">
-    👤 ANGGOTA TIM</div>
+    👤 ANGGOTA KELOMPOK</div>
     <div class="anggota-card">
         <div class="anggota-no">01</div>
         <div>
