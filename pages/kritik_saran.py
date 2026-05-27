@@ -35,6 +35,11 @@ footer { visibility: hidden; }
     border-radius: 8px !important;
 }
 [data-testid="stSidebarResizeHandle"] { display: none !important; }
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
