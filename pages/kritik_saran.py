@@ -53,6 +53,11 @@ with st.sidebar:
     st.page_link("streamlit_app.py", label="🏠 Dashboard Utama", use_container_width=True)
     st.page_link("pages/kritik_saran.py", label="💬 Kritik & Saran", use_container_width=True)
 
+# Tombol buka sidebar
+if st.button("☰ Buka Menu Navigasi"):
+    st.session_state["sidebar_open"] = True
+    st.rerun()
+
 # Konten utama - dibatasi lebar supaya tidak terlalu lebar
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
