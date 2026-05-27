@@ -26,6 +26,15 @@ html, body, [data-testid="stAppViewContainer"] {
 [data-testid="stSidebarNav"] { display: none !important; }
 footer { visibility: hidden; }
 [data-testid="stToolbar"] { display: none; }
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: rgba(0,212,255,0.15) !important;
+    border: 1px solid rgba(0,212,255,0.4) !important;
+    border-radius: 8px !important;
+}
+[data-testid="stSidebarResizeHandle"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
