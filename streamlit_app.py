@@ -9,7 +9,7 @@ from datetime import datetime, timezone, timedelta
 WIB = timezone(timedelta(hours=7))
 
 # ============================================================
-# 🔧 KONFIGURASI — UBAH SESUAI KEBUTUHAN
+# KONFIGURASI
 # ============================================================
 JUDUL_APLIKASI = "Lab Environment Monitor"                    # ✏️ Ganti judul
 SUBJUDUL = "Sistem Monitoring Suhu, Kelembapan & Tekanan"     # ✏️ Ganti subjudul
@@ -349,6 +349,43 @@ st.markdown(f"""
     <div class="header-title">🔬 {JUDUL_APLIKASI}</div>
     <div class="header-sub">{SUBJUDUL}</div>
     <div class="header-lab">{NAMA_LABORATORIUM}</div>
+</div>
+""", unsafe_allow_html=True)
+
+# ============================================================
+# SAMBUTAN
+# ============================================================
+st.markdown(f"""
+<div style="
+    background: #071428;
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.2rem;
+    position: relative;
+    overflow: hidden;
+">
+    <div style="position:absolute; top:0; left:0; right:0; height:3px;
+    background: linear-gradient(90deg, transparent, #00d4ff, transparent);"></div>
+    <div style="font-family:'Orbitron',monospace; font-size:0.75rem; color:#00d4ff;
+    letter-spacing:0.2em; margin-bottom:0.8rem;">👋 SELAMAT DATANG</div>
+    <div style="font-size:1.05rem; color:#e0f0ff; line-height:1.8; margin-bottom:0.8rem;">
+        Selamat datang di <b style="color:#00d4ff;">{JUDUL_APLIKASI}</b> — sistem pemantauan
+        kondisi lingkungan {NAMA_LABORATORIUM} secara real-time.
+    </div>
+    <div style="font-size:0.9rem; color:#6a8caa; line-height:1.8;">
+        Aplikasi ini dirancang untuk membantu memantau <b style="color:#e0f0ff;">suhu</b>,
+        <b style="color:#e0f0ff;">kelembapan</b>, dan <b style="color:#e0f0ff;">tekanan udara</b>
+        laboratorium secara otomatis setiap 10 detik. Data dapat diunduh dalam format CSV
+        untuk keperluan dokumentasi dan analisis lebih lanjut.
+    </div>
+    <div style="margin-top:1rem; display:flex; gap:1.5rem; flex-wrap:wrap;">
+        <div style="font-size:0.8rem; color:#00ff88;">🌡️ Monitoring Suhu</div>
+        <div style="font-size:0.8rem; color:#00ff88;">💧 Monitoring Kelembapan</div>
+        <div style="font-size:0.8rem; color:#00ff88;">🔵 Monitoring Tekanan</div>
+        <div style="font-size:0.8rem; color:#00ff88;">⬇️ Download CSV</div>
+        <div style="font-size:0.8rem; color:#00ff88;">🔄 Auto Refresh 10 Detik</div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
