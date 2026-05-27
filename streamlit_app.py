@@ -198,6 +198,7 @@ div[class*="ResizeHandle"] {
     display: none !important;
     pointer-events: none !important;
 }
+[data-testid="stSidebarNav"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
