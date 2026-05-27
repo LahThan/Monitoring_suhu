@@ -7,6 +7,14 @@ EMAIL_PENERIMA = st.secrets["EMAIL_PENERIMA"]
 EMAIL_PENGIRIM = st.secrets["EMAIL_PENGIRIM"]
 EMAIL_APP_PASSWORD = st.secrets["EMAIL_APP_PASSWORD"]
 st.set_page_config(page_title="Saran & Kritik", page_icon="💬", layout="centered")
+with st.sidebar:
+    st.markdown("""
+    <div style="text-align:center; padding:0.8rem 0; border-bottom:1px solid rgba(0,212,255,0.2); margin-bottom:1rem;">
+        <div style="font-family:'Orbitron',monospace; font-size:0.9rem; color:#00d4ff;">🗂️ NAVIGASI</div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.page_link("streamlit_app.py", label="🏠 Dashboard Utama", use_container_width=True)
+    st.page_link("pages/kritik_saran.py", label="💬 Kritik & Saran", use_container_width=True)
 
 st.markdown("""
 <style>
