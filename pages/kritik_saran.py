@@ -7,7 +7,7 @@ EMAIL_PENERIMA = st.secrets["EMAIL_PENERIMA"]
 EMAIL_PENGIRIM = st.secrets["EMAIL_PENGIRIM"]
 EMAIL_APP_PASSWORD = st.secrets["EMAIL_APP_PASSWORD"]
 
-st.set_page_config(page_title="Saran & Kritik", page_icon="💬", layout="wide")
+st.set_page_config(page_title="Saran & Kritik", page_icon="💬", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown("""
 <style>
