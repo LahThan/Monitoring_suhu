@@ -8,6 +8,27 @@ EMAIL_PENGIRIM = st.secrets["EMAIL_PENGIRIM"]
 EMAIL_APP_PASSWORD = st.secrets["EMAIL_APP_PASSWORD"]
 st.set_page_config(page_title="Saran & Kritik", page_icon="💬", layout="centered")
 
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
+html, body, [data-testid="stAppViewContainer"] {
+    background: #040d1a !important;
+    color: #e0f0ff !important;
+    font-family: 'Rajdhani', sans-serif !important;
+}
+[data-testid="stAppViewContainer"] {
+    background: radial-gradient(ellipse at 20% 0%, #0a1f4d 0%, #040d1a 60%) !important;
+}
+[data-testid="stSidebar"] {
+    background: #071428 !important;
+    border-right: 1px solid rgba(0,212,255,0.15) !important;
+}
+[data-testid="stSidebarNav"] { display: none !important; }
+footer { visibility: hidden; }
+[data-testid="stToolbar"] { display: none; }
+</style>
+""", unsafe_allow_html=True)
+
 st.markdown("## 💬 Saran & Kritik")
 st.markdown("Sampaikan saran atau kritik kamu untuk pengembangan aplikasi ini.")
 st.divider()
