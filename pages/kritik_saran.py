@@ -35,6 +35,10 @@ footer { visibility: hidden; }
     background: rgba(0,212,255,0.15) !important;
     border: 1px solid rgba(0,212,255,0.4) !important;
     border-radius: 8px !important;
+    position: fixed !important;
+    top: 0.5rem !important;
+    left: 0.5rem !important;
+    z-index: 9999 !important;
 }
 </style>
 """, unsafe_allow_html=True)
