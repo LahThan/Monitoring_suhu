@@ -38,6 +38,7 @@ footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
+st.page_link("streamlit_app.py", label="🔙 Kembali ke Dashboard", use_container_width=False)
 st.markdown("## 💬 Saran & Kritik")
 st.markdown("Sampaikan saran atau kritik kamu untuk pengembangan aplikasi ini.")
 st.divider()
