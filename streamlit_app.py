@@ -301,7 +301,6 @@ with st.sidebar:
     st.markdown("---")
 
    # Audio
-    # Audio
     st.markdown("**🎵 Backsound**")
     total_lagu = len(PLAYLIST)
     idx = st.session_state.playlist_index
@@ -328,7 +327,8 @@ with st.sidebar:
             except:
                 st.session_state.audio_bytes = None
             st.rerun()
-   if st.session_state.audio_bytes:
+
+    if st.session_state.audio_bytes:
         st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=False)
     else:
         st.warning("Gagal load audio.")
