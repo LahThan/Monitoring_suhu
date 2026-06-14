@@ -541,7 +541,10 @@ if not st.session_state.data.empty:
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=df_chart["Waktu"], y=data,
-            mode="lines", line=dict(color=warna, width=2),
+            mode="lines+markers",
+            line=dict(color=warna, width=2),
+            marker=dict(color=warna, size=6, symbol="circle",
+                line=dict(color="white", width=1)),
             fill="tozeroy", fillcolor=warna.replace(")", ",0.1)").replace("rgb", "rgba")
         ))
         fig.update_layout(
