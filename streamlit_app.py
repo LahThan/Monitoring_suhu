@@ -329,34 +329,11 @@ with st.sidebar:
                 st.session_state.audio_bytes = None
             st.rerun()
 
-    if st.session_state.audio_bytes:
-        import base64
-        b64 = base64.b64encode(st.session_state.audio_bytes).decode()
-        idx = st.session_state.playlist_index
-        total = len(PLAYLIST)
-        next_idx = (idx + 1) % total
-        st.markdown(f"""
-        <audio id="player" controls style="width:100%; margin-top:0.3rem;">
-            <source src="data:audio/mp3;base64,{b64}" type="audio/mpeg">
-        </audio>
-        <script>
-            const player = document.getElementById('player');
-            player.onended = function() {{
-                // Simpan index lagu berikutnya ke localStorage
-                localStorage.setItem('next_song', '{next_idx}');
-                // Klik tombol next secara otomatis
-                const buttons = window.parent.document.querySelectorAll('button');
-                buttons.forEach(btn => {{
-                    if (btn.innerText.includes('Selanjutnya')) {{
-                        btn.click();
-                    }}
-                }});
-            }};
-        </script>
-        """, unsafe_allow_html=True)
+   if st.session_state.audio_bytes:
+        st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=False)
     else:
         st.warning("Gagal load audio.")
-
+        
     st.markdown("---")
 
     # Navigasi halaman
