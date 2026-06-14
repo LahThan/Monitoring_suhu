@@ -496,8 +496,30 @@ else:
 # ============================================================
 if not st.session_state.data.empty:
     st.markdown('<div class="section-title">📈 Grafik Monitoring</div>', unsafe_allow_html=True)
-    df_chart = st.session_state.data.tail(max_grafik).set_index("Waktu")
-    st.line_chart(df_chart, use_container_width=True, height=300)
+    df_chart = st.session_state.data.tail(max_grafik)
+
+    g1, g2, g3 = st.columns(3)
+
+    with g1:
+        st.markdown("🌡️ **Suhu (°C)**")
+        st.line_chart(
+            df_chart.set_index("Waktu")["Suhu (°C)"],
+            use_container_width=True, height=200, color="#00ff88"
+        )
+
+    with g2:
+        st.markdown("💧 **Kelembapan (%)**")
+        st.line_chart(
+            df_chart.set_index("Waktu")["Kelembapan (%)"],
+            use_container_width=True, height=200, color="#00d4ff"
+        )
+
+    with g3:
+        st.markdown("🔵 **Tekanan (hPa)**")
+        st.line_chart(
+            df_chart.set_index("Waktu")["Tekanan (hPa)"],
+            use_container_width=True, height=200, color="#ffd700"
+        )
 
 # ============================================================
 # TABEL DATA
