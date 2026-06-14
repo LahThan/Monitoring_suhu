@@ -537,24 +537,34 @@ if not st.session_state.data.empty:
 
     with g1:
         st.markdown("🌡️ **Suhu (°C)**")
+        s = df_chart["Suhu (°C)"]
+        margin = max((s.max() - s.min()) * 0.5, 0.5)
         st.line_chart(
             df_chart.set_index("Waktu")["Suhu (°C)"],
-            use_container_width=True, height=200, color="#00ff88"
+            use_container_width=True, height=200, color="#00ff88",
+            y_label="°C",
         )
+        st.caption(f"Min: {s.min()} | Max: {s.max()} | Range: {round(s.max()-s.min(),1)}")
 
     with g2:
         st.markdown("💧 **Kelembapan (%)**")
+        k = df_chart["Kelembapan (%)"]
         st.line_chart(
             df_chart.set_index("Waktu")["Kelembapan (%)"],
-            use_container_width=True, height=200, color="#00d4ff"
+            use_container_width=True, height=200, color="#00d4ff",
+            y_label="%",
         )
+        st.caption(f"Min: {k.min()} | Max: {k.max()} | Range: {round(k.max()-k.min(),1)}")
 
     with g3:
         st.markdown("🔵 **Tekanan (hPa)**")
+        t = df_chart["Tekanan (hPa)"]
         st.line_chart(
             df_chart.set_index("Waktu")["Tekanan (hPa)"],
-            use_container_width=True, height=200, color="#ffd700"
+            use_container_width=True, height=200, color="#ffd700",
+            y_label="hPa",
         )
+        st.caption(f"Min: {t.min()} | Max: {t.max()} | Range: {round(t.max()-t.min(),1)}")
 
 # ============================================================
 # TABEL DATA
