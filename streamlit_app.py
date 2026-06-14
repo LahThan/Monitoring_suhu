@@ -14,7 +14,13 @@ WIB = timezone(timedelta(hours=7))
 JUDUL_APLIKASI = "Lab Environment Monitor"                    # ✏️ Ganti judul
 SUBJUDUL = "Sistem Monitoring Suhu, Kelembapan & Tekanan"     # ✏️ Ganti subjudul
 NAMA_LABORATORIUM = "Laboratorium Kimia Analitik"             # ✏️ Ganti nama lab
-URL_BACKSOUND = "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound.mp3"  # ✏️ Ganti URL lagu
+PLAYLIST = [
+    "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound.mp3",   # ✏️ Lagu 1
+    "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound2.mp3",  # ✏️ Lagu 2
+    "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound3.mp3",  # ✏️ Lagu 3
+    "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound4.mp3",  # ✏️ Lagu 4
+    "https://raw.githubusercontent.com/LahThan/Monitoring_suhu/main/backsound5.mp3",  # ✏️ Lagu 5
+]
 EMAIL_PENERIMA = st.secrets["EMAIL_PENERIMA"]
 EMAIL_PENGIRIM = st.secrets["EMAIL_PENGIRIM"]
 EMAIL_APP_PASSWORD = st.secrets["EMAIL_APP_PASSWORD"]
@@ -209,9 +215,12 @@ if "data" not in st.session_state:
     st.session_state.data = pd.DataFrame(
         columns=["Waktu", "Suhu (°C)", "Kelembapan (%)", "Tekanan (hPa)"]
     )
+if "playlist_index" not in st.session_state:
+    st.session_state.playlist_index = 0
 if "audio_bytes" not in st.session_state:
     try:
-        resp = requests.get(URL_BACKSOUND)
+        url = PLAYLIST[st.session_state.playlist_index]
+        resp = requests.get(url)
         st.session_state.audio_bytes = resp.content
     except:
         st.session_state.audio_bytes = None
@@ -292,11 +301,38 @@ with st.sidebar:
     st.markdown("---")
 
    # Audio
+    # Audio
     st.markdown("**🎵 Backsound**")
+    total_lagu = len(PLAYLIST)
+    idx = st.session_state.playlist_index
+    st.caption(f"🎵 Lagu {idx + 1} dari {total_lagu}")
+
+    col_prev, col_next = st.columns(2)
+    with col_prev:
+        if st.button("⏮ Sebelumnya", use_container_width=True, key="btn_prev"):
+            st.session_state.playlist_index = (idx - 1) % total_lagu
+            url = PLAYLIST[st.session_state.playlist_index]
+            try:
+                resp = requests.get(url)
+                st.session_state.audio_bytes = resp.content
+            except:
+                st.session_state.audio_bytes = None
+            st.rerun()
+    with col_next:
+        if st.button("⏭ Selanjutnya", use_container_width=True, key="btn_next"):
+            st.session_state.playlist_index = (idx + 1) % total_lagu
+            url = PLAYLIST[st.session_state.playlist_index]
+            try:
+                resp = requests.get(url)
+                st.session_state.audio_bytes = resp.content
+            except:
+                st.session_state.audio_bytes = None
+            st.rerun()
+
     if st.session_state.audio_bytes:
-        st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=True)
+        st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=False)
     else:
-        st.warning("Gagal load audio. Cek URL_BACKSOUND.")
+        st.warning("Gagal load audio.")
 
     st.markdown("---")
 
