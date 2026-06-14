@@ -545,7 +545,7 @@ if not st.session_state.data.empty:
             line=dict(color=warna, width=2),
             marker=dict(color="black", size=6, symbol="circle",
                 line=dict(color="white", width=1)),
-            fill="tozeroy", fillcolor=warna.replace(")", ",0.1)").replace("rgb", "rgba")
+            fill=None
         ))
         fig.update_layout(
             height=200, margin=dict(l=0, r=0, t=10, b=0),
