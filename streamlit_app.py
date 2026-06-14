@@ -543,7 +543,7 @@ if not st.session_state.data.empty:
             x=df_chart["Waktu"], y=data,
             mode="lines+markers",
             line=dict(color=warna, width=2),
-            marker=dict(color=warna, size=6, symbol="circle",
+            marker=dict(color="black", size=6, symbol="circle",
                 line=dict(color="white", width=1)),
             fill="tozeroy", fillcolor=warna.replace(")", ",0.1)").replace("rgb", "rgba")
         ))
