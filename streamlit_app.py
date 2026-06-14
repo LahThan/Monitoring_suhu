@@ -4,6 +4,7 @@ import random
 import requests
 import base64
 import time
+import plotly.graph_objects as go
 from datetime import datetime, timezone, timedelta
 
 WIB = timezone(timedelta(hours=7))
@@ -535,35 +536,44 @@ if not st.session_state.data.empty:
 
     g1, g2, g3 = st.columns(3)
 
+    def buat_grafik(data, label, satuan, warna):
+        margin = max((data.max() - data.min()) * 0.5, 0.3)
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=df_chart["Waktu"], y=data,
+            mode="lines", line=dict(color=warna, width=2),
+            fill="tozeroy", fillcolor=warna.replace(")", ",0.1)").replace("rgb", "rgba")
+        ))
+        fig.update_layout(
+            height=200, margin=dict(l=0, r=0, t=10, b=0),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            xaxis=dict(showgrid=False, color="#6a8caa", tickfont=dict(size=10)),
+            yaxis=dict(
+                showgrid=True, gridcolor="rgba(255,255,255,0.05)",
+                color="#6a8caa", tickfont=dict(size=10),
+                range=[data.min() - margin, data.max() + margin]
+            ),
+        )
+        return fig
+
+    s = df_chart["Suhu (°C)"]
+    k = df_chart["Kelembapan (%)"]
+    t = df_chart["Tekanan (hPa)"]
+
     with g1:
         st.markdown("🌡️ **Suhu (°C)**")
-        s = df_chart["Suhu (°C)"]
-        margin = max((s.max() - s.min()) * 0.5, 0.5)
-        st.line_chart(
-            df_chart.set_index("Waktu")["Suhu (°C)"],
-            use_container_width=True, height=200, color="#00ff88",
-            y_label="°C",
-        )
+        st.plotly_chart(buat_grafik(s, "Suhu", "°C", "#00ff88"), use_container_width=True)
         st.caption(f"Min: {s.min()} | Max: {s.max()} | Range: {round(s.max()-s.min(),1)}")
 
     with g2:
         st.markdown("💧 **Kelembapan (%)**")
-        k = df_chart["Kelembapan (%)"]
-        st.line_chart(
-            df_chart.set_index("Waktu")["Kelembapan (%)"],
-            use_container_width=True, height=200, color="#00d4ff",
-            y_label="%",
-        )
+        st.plotly_chart(buat_grafik(k, "Kelembapan", "%", "#00d4ff"), use_container_width=True)
         st.caption(f"Min: {k.min()} | Max: {k.max()} | Range: {round(k.max()-k.min(),1)}")
 
     with g3:
         st.markdown("🔵 **Tekanan (hPa)**")
-        t = df_chart["Tekanan (hPa)"]
-        st.line_chart(
-            df_chart.set_index("Waktu")["Tekanan (hPa)"],
-            use_container_width=True, height=200, color="#ffd700",
-            y_label="hPa",
-        )
+        st.plotly_chart(buat_grafik(t, "Tekanan", "hPa", "#ffd700"), use_container_width=True)
         st.caption(f"Min: {t.min()} | Max: {t.max()} | Range: {round(t.max()-t.min(),1)}")
 
 # ============================================================
