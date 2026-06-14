@@ -329,7 +329,7 @@ with st.sidebar:
             st.rerun()
 
     if st.session_state.audio_bytes:
-        st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=False)
+        st.audio(st.session_state.audio_bytes, format="audio/mp3", loop=True)
     else:
         st.warning("Gagal load audio.")
         
